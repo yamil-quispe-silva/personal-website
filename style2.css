@@ -1,0 +1,79 @@
+@font-face {
+    font-family: 'Swiss 721 Black Rounded';
+    src: url('./swiss_721_black_rounded_bt.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins Regular';
+    src: url('./Poppins-Medium.ttf') format('truetype'); /* Update the path to your Poppins Regular font file */
+    font-weight: normal;
+    font-style: normal;
+}
+
+body, h1 {
+    margin: 0;
+    padding: 0;
+    font-family: 'Swiss 721 Black Rounded', sans-serif;
+    font-weight: 700;
+    color: white; /* Set the text color to white */
+}
+
+p {
+    font-family: 'Poppins Medium', sans-serif;  
+    color: white;
+    font-weight: 700; /* The normal font weight for Poppins Regular */
+    font-size: 1.1rem;
+
+}
+
+
+body {
+    background-color: #010945;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    scroll-behavior: auto !important;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center; /* Center text for all child elements */
+    height: 100vh;
+}
+
+.logo {
+    /* Remove width attribute to use CSS instead for responsive behavior */
+    max-width: 100%; /* Ensure logo is not larger than its container */
+    height: auto;
+    margin-bottom: 20px; /* Add some space below the logo */
+}
+
+.badge-link {
+/*    
+    display: block;
+    margin-top: 20px;  */
+    position: absolute; /* Positioning context */
+    bottom: 0; /* Align to the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Offset by half its width to truly center it */
+    width: 170px; /* Optional: you can set a width on the badge */
+    margin-bottom: 20px; /* Space from the bottom edge */
+}
+
+.badge {
+    width: 170px; /* Set width of badge */
+    margin: 0 auto; /* Center badge horizontally */
+}
+
+.title-logo {
+    font-size: 3.8rem;
+    margin-top: 20px; /* Add some space above the title */
+}
+
+
