@@ -6,6 +6,7 @@
   const bodyContent = document.getElementById('bodyContent');
   const contactLinks = document.getElementById('contactLinks');
   const headerFade = document.getElementById('headerFade');
+  const bottomVisual = document.querySelector('.bottom-visual');
 
   let progress = 0;
   let targetProgress = 0;
@@ -39,25 +40,30 @@
   function getMaxScroll() {
     const bodyBottom = bodyContent.offsetTop + bodyContent.scrollHeight;
     const cardH = card.clientHeight;
-    return Math.max(0, bodyBottom - cardH + 600);
+    return Math.max(0, bodyBottom - cardH + 1000);
   }
 
   // ---- Entrance fade-in ----
   window.addEventListener('load', () => {
     measureBaseSizes();
+    // Start with image hidden
+    bottomVisual.style.opacity = 0;
     applyState(0);
     requestAnimationFrame(() => {
       avatar.style.transition = 'opacity 0.9s cubic-bezier(0.25,0.1,0.25,1)';
       line1.style.transition = 'opacity 0.9s cubic-bezier(0.25,0.1,0.25,1) 0.15s';
       line2.style.transition = 'opacity 0.9s cubic-bezier(0.25,0.1,0.25,1) 0.25s';
+      bottomVisual.style.transition = 'opacity 1.5s cubic-bezier(0.25,0.1,0.25,1) 0.3s';
       avatar.style.opacity = 1;
       line1.style.opacity = 1;
       line2.style.opacity = 1;
+      bottomVisual.style.opacity = 1;
       setTimeout(() => {
         avatar.style.transition = '';
         line1.style.transition = '';
         line2.style.transition = '';
-      }, 1200);
+        bottomVisual.style.transition = '';
+      }, 2000);
 
     });
   });
@@ -67,19 +73,20 @@
     e.preventDefault();
     const delta = e.deltaY;
 
-    if (targetProgress < 1) {
-      // Phase 1: drive the hero transition
-      targetProgress = clamp(targetProgress + delta * 0.0015, 0, 1);
-    } else if (delta > 0) {
-      // Phase 2: scroll the body content down
-      targetScrollOffset = clamp(targetScrollOffset + delta, 0, getMaxScroll());
+    if (delta > 0) {
+      // Scrolling down
+      if (targetProgress < 1) {
+        targetProgress = clamp(targetProgress + delta * 0.0015, 0, 1);
+      } else {
+        targetScrollOffset = clamp(targetScrollOffset + delta, 0, getMaxScroll());
+      }
     } else {
-      // Scrolling up: first scroll body back, then reverse transition
+      // Scrolling up
       if (targetScrollOffset > 0) {
         targetScrollOffset = clamp(targetScrollOffset + delta, 0, getMaxScroll());
       } else {
-        // Harder to reverse back to intro state
-        targetProgress = clamp(targetProgress + delta * 0.0005, 0, 1);
+        // Cannot reverse back to intro
+        // targetProgress stays at 1
       }
     }
     startAnimation();
@@ -96,15 +103,17 @@
     const delta = touchStartY - e.touches[0].clientY;
     touchStartY = e.touches[0].clientY;
 
-    if (targetProgress < 1) {
-      targetProgress = clamp(targetProgress + delta * 0.003, 0, 1);
-    } else if (delta > 0) {
-      targetScrollOffset = clamp(targetScrollOffset + delta, 0, getMaxScroll());
+    if (delta > 0) {
+      if (targetProgress < 1) {
+        targetProgress = clamp(targetProgress + delta * 0.003, 0, 1);
+      } else {
+        targetScrollOffset = clamp(targetScrollOffset + delta, 0, getMaxScroll());
+      }
     } else {
       if (targetScrollOffset > 0) {
         targetScrollOffset = clamp(targetScrollOffset + delta, 0, getMaxScroll());
       } else {
-        targetProgress = clamp(targetProgress + delta * 0.001, 0, 1);
+        // Cannot reverse back to intro
       }
     }
     startAnimation();
@@ -202,6 +211,13 @@
     line2.style.left = lerp(s1.line2X, s2.line2X, ease) + 'px';
     line2.style.top = lerp(s1.line2Y, s2.line2Y, ease) + 'px';
     line2.style.transform = `scale(${scale})`;
+
+    // ========== Bottom visual: slides down as user scrolls ==========
+    const isMobile = cw < 768;
+    const imgStartBottom = isMobile ? 0 : -5;
+    const imgEndBottom = isMobile ? 0 : -20;
+    const imgBottom = lerp(imgStartBottom, imgEndBottom, ease);
+    bottomVisual.style.bottom = imgBottom + '%';
 
     // ========== Header fade overlay (covers from top to below header) ==========
     headerFade.style.top = '0';
